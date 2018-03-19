@@ -1,56 +1,76 @@
-#include <Crypto\Random.h>
+#pragma comment(lib, "Advapi32.lib")
+
+#include <Crypto\Random.hpp>
 
 #include <windows.h>
 #include <wincrypt.h>
 
-
-std::string Crypto::Random::GenerateArray(size_t len)
+namespace m4x1m1l14n
 {
-	std::string ret;
-
-	HCRYPTPROV hCryptProv = 0;
-
-	BOOL fSuccess = CryptAcquireContext(&hCryptProv, nullptr, nullptr, PROV_RSA_FULL, 0);
-	if (!fSuccess && GetLastError() == NTE_BAD_KEYSET)
+	std::string Crypto::Random::GenerateArray(size_t len)
 	{
-		fSuccess = CryptAcquireContext(&hCryptProv, nullptr, nullptr, PROV_RSA_FULL, CRYPT_NEWKEYSET);
-	}
+		std::string ret;
 
-	if (fSuccess)
-	{
-		LPBYTE pbData = (LPBYTE)LocalAlloc(0, len);
-		if (pbData)
+		HCRYPTPROV hCryptProv = 0;
+
+		BOOL fSuccess = CryptAcquireContext(&hCryptProv, nullptr, nullptr, PROV_RSA_FULL, 0);
+		if (!fSuccess && GetLastError() == NTE_BAD_KEYSET)
 		{
-			if (CryptGenRandom(hCryptProv, (DWORD)len, pbData))
-			{
-				ret = std::string((const char*)pbData, len);
-			}
-
-			LocalFree(pbData);
+			fSuccess = CryptAcquireContext(&hCryptProv, nullptr, nullptr, PROV_RSA_FULL, CRYPT_NEWKEYSET);
 		}
 
-		CryptReleaseContext(hCryptProv, 0);
+		if (fSuccess)
+		{
+			LPBYTE pbData = (LPBYTE)LocalAlloc(0, len);
+			if (pbData)
+			{
+				if (CryptGenRandom(hCryptProv, (DWORD)len, pbData))
+				{
+					ret = std::string((const char*)pbData, len);
+				}
+
+				LocalFree(pbData);
+			}
+
+			CryptReleaseContext(hCryptProv, 0);
+		}
+
+		return ret;
 	}
 
-	return ret;
-}
-
-bool Crypto::Random::Generate(void * pData, size_t len)
-{
-	HCRYPTPROV hCryptProv = 0;
-
-	BOOL fSuccess = CryptAcquireContext(&hCryptProv, nullptr, nullptr, PROV_RSA_FULL, 0);
-	if (!fSuccess && GetLastError() == NTE_BAD_KEYSET) 
+	bool Crypto::Random::Generate(void * pData, size_t len)
 	{
-		fSuccess = CryptAcquireContext(&hCryptProv, nullptr, nullptr, PROV_RSA_FULL, CRYPT_NEWKEYSET);
+		HCRYPTPROV hCryptProv = 0;
+
+		BOOL fSuccess = CryptAcquireContext(&hCryptProv, nullptr, nullptr, PROV_RSA_FULL, 0);
+		if (!fSuccess && GetLastError() == NTE_BAD_KEYSET)
+		{
+			fSuccess = CryptAcquireContext(&hCryptProv, nullptr, nullptr, PROV_RSA_FULL, CRYPT_NEWKEYSET);
+		}
+
+		if (fSuccess)
+		{
+			fSuccess = CryptGenRandom(hCryptProv, (DWORD)len, (BYTE*)pData);
+		}
+
+		if (hCryptProv) { CryptReleaseContext(hCryptProv, 0); }
+
+		return fSuccess ? true : false;
 	}
 
-	if (fSuccess) 
+	std::string Crypto::Random::GenerateString(size_t len, const std::string & chars)
 	{
-		fSuccess = CryptGenRandom(hCryptProv, (DWORD)len, (BYTE*)pData);
+		auto ret = Crypto::Random::GenerateArray(len);
+		if (!ret.empty())
+		{
+			auto n = chars.length();
+
+			for (auto& c : ret)
+			{
+				c = chars[c % n];
+			}
+		}
+
+		return ret;
 	}
-
-	if (hCryptProv) { CryptReleaseContext(hCryptProv, 0); }
-
-	return fSuccess ? true : false;
 }
