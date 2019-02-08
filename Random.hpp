@@ -12,19 +12,32 @@ namespace m4x1m1l14n
 			bool Generate(void * pData, size_t len);
 			std::string GenerateString(size_t len, const std::string& chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 
-			template<typename T,typename = std::enable_if_t<std::is_integral<T>::value>>
-			inline T Generate(const T min = std::numeric_limits<T>::min(), const T max = std::numeric_limits<T>::max())
+			template <
+				typename T, 
+				typename = std::enable_if_t<std::is_integral<T>::value>
+			>
+			inline T Generate
+			(
+				T min = std::numeric_limits<T>::min(), 
+				T max = std::numeric_limits<T>::max()
+			)
 			{
-				if (min >= max)
-				{
-					throw std::invalid_argument("\"min\" {" + std::to_string(min) + "} must be less than \"max\" {" + std::to_string(max) + "}");
-				}
-
 				T val;
 
 				Generate(&val, sizeof(val));
 
-				val = (val % ((max - min) + 1)) + min;
+				if (min > max)
+				{
+					min ^= max; max ^= min; min ^= max;
+				}
+
+				const T& mod = (max - min) + 1;
+				if (mod)
+				{
+					val %= mod;
+				}
+
+				val = (val < 0 ? (val * -1) : val) + min;
 
 				return val;
 			}
