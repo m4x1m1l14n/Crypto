@@ -128,7 +128,7 @@ namespace m4x1m1l14n
 											if (BCryptFinishHash(hHash, pHash, dwHashLength, 0) == 0)
 											{
 												BCRYPT_PKCS1_PADDING_INFO PKCS1PaddingInfo = { 0 };
-												DWORD dwSignature = 0;
+												/*DWORD dwSignature = 0;*/
 
 												SECURITY_STATUS secStatus = NCryptVerifySignature(m_hPublicKey, &PKCS1PaddingInfo, pHash, dwHashLength, (PBYTE)signature.c_str(), (DWORD)signature.length(), NCRYPT_PAD_PKCS1_FLAG);
 
