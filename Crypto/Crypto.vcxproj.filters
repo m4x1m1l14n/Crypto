@@ -35,22 +35,22 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Crypto\AesCBC.cpp">
+    <ClCompile Include="src\AesCBC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Crypto\Base64.cpp">
+    <ClCompile Include="src\Base64.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Crypto\Hash.cpp">
+    <ClCompile Include="src\Hash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Crypto\Hex.cpp">
+    <ClCompile Include="src\Hex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Crypto\Random.cpp">
+    <ClCompile Include="src\Random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Crypto\Rsa.cpp">
+    <ClCompile Include="src\Rsa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
